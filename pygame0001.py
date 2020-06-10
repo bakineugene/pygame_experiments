@@ -17,30 +17,30 @@ def handle_events_quit(event, game):
             game.is_running = False
 
 
-class GameState(object):
+class Game(object):
 
     def __init__(self):
         self.is_running = True
 
+        pygame.init()
 
-def game_init():
-    pygame.init()
-    screen = pygame.display.set_mode(RESOLUTION_DEFAULT)
+        self.screen = pygame.display.set_mode(RESOLUTION_DEFAULT)
 
-    background = pygame.Surface(screen.get_size())
-    background.fill(COLOR_WHITE)
-    background.convert()
+        self.background = pygame.Surface(self.screen.get_size())
+        self.background.fill(COLOR_WHITE)
+        self.background.convert()
 
-    screen.blit(background, POSITION_ZERO)
+        self.screen.blit(self.background, POSITION_ZERO)
 
-    game = GameState()
-
-    while game.is_running:
-        for event in pygame.event.get():
-            handle_events_debug(event, game)
-            handle_events_quit(event, game)
-
+    def draw(self):
         pygame.display.flip()
 
+    def start(self):
+        while game.is_running:
+            for event in pygame.event.get():
+                handle_events_debug(event, game)
+                handle_events_quit(event, game)
+            game.draw()
 
-game_init()
+game = Game()
+game.start()
