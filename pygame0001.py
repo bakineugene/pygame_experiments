@@ -31,7 +31,9 @@ class Game(object):
 
     def __init__(self):
         self.is_running = True
-        self.timer = 1
+
+        self.scroll_left = 0
+        self.scroll_up = 0
 
         pygame.init()
 
@@ -41,16 +43,15 @@ class Game(object):
         self.background.fill(COLOR_WHITE)
         self.background = self.background.convert()
 
-        self.grid = pygame.Surface(self.screen.get_size())
+        self.grid = pygame.Surface((6000, 6000))
         self.grid.fill(COLOR_WHITE)
         draw_grid(self.grid)
         
         self.grid = self.grid.convert_alpha()
 
     def draw(self):
-        self.timer = self.timer + 1
         self.screen.blit(self.background, POSITION_ZERO)
-        self.screen.blit(self.grid, POSITION_ZERO)
+        self.screen.blit(self.grid, (POSITION_ZERO[0] + self.scroll_left, POSITION_ZERO[1] + self.scroll_up))
         pygame.display.flip()
 
     def start(self):
@@ -58,7 +59,19 @@ class Game(object):
             for event in pygame.event.get():
                 handle_events_debug(event, game)
                 handle_events_quit(event, game)
+                self.handle_grid_scroll(event)
             game.draw()
+
+    def handle_grid_scroll(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_RIGHT:
+                self.scroll_left = self.scroll_left + 5
+            if event.key == pygame.K_LEFT:
+                self.scroll_left = self.scroll_left - 5
+            if event.key == pygame.K_UP:
+                self.scroll_up = self.scroll_up + 5
+            if event.key == pygame.K_DOWN:
+                self.scroll_up = self.scroll_up - 5
 
 game = Game()
 game.start()
