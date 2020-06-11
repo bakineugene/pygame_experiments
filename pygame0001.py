@@ -1,4 +1,4 @@
-from pygame import QUIT, KEYDOWN, K_ESCAPE, draw, init, time, display, Surface, event, K_LEFT, K_RIGHT, K_UP, K_DOWN, KEYDOWN, KEYUP
+from pygame import QUIT, KEYDOWN, K_ESCAPE, draw, init, time, display, Surface, event, K_LEFT, K_RIGHT, K_UP, K_DOWN, KEYDOWN, KEYUP, K_EQUALS, K_MINUS
 
 RESOLUTION_DEFAULT = (1024, 768)
 
@@ -26,7 +26,7 @@ def draw_grid_element(surface, colour, size, point):
     point_plus_y = point[1] + size
     draw.lines(surface, colour, True, (point, (point[0], point_plus_y), (point_plus_x, point_plus_y), (point_plus_x, point[1])))
 
-def draw_grid(surface, colour=COLOR_BLACK, size=ZOOM, size_x=MAP_SIZE, size_y=MAP_SIZE):
+def draw_grid(surface, colour, size, size_x=MAP_SIZE, size_y=MAP_SIZE):
     for x in range(size_x):
         for y in range(size_y):
             draw_grid_element(surface, colour, size, (x * size, y * size))
@@ -37,6 +37,7 @@ class Game(object):
         self.is_running = True
         self.grid_position = (0, 0)
         self.scrolling = (0, 0)
+        self.zoom = ZOOM
 
         self.scroll_left = 0
         self.scroll_up = 0
@@ -50,11 +51,15 @@ class Game(object):
         self.background.fill(COLOR_WHITE)
         self.background = self.background.convert()
 
-        self.grid = Surface((ZOOM*MAP_SIZE, ZOOM*MAP_SIZE))
+        self.make_grid()
+
+    def make_grid(self):
+        self.grid = Surface((self.zoom * MAP_SIZE + 1, self.zoom * MAP_SIZE + 1))
         self.grid.fill(COLOR_WHITE)
-        draw_grid(self.grid)
-        
+        draw_grid(self.grid, COLOR_BLACK, self.zoom)
         self.grid = self.grid.convert_alpha()
+        self.draw()
+
 
     def draw(self):
         self.grid_position = (self.grid_position[0] + self.scrolling[0], self.grid_position[1] + self.scrolling[1])
@@ -69,6 +74,7 @@ class Game(object):
                 handle_events_debug(e, self)
                 handle_events_quit(e, self)
                 self.handle_grid_scroll(e)
+                self.handle_grid_zoom(e)
             self.draw()
 
     def handle_grid_scroll(self, event):
@@ -91,6 +97,15 @@ class Game(object):
             if event.key == K_DOWN:
                 self.scrolling = (self.scrolling[0], 0)
 
+    def handle_grid_zoom(self, event):
+        if event.type == KEYDOWN:
+            if event.key == K_EQUALS:
+                self.zoom = self.zoom + 10
+                self.make_grid()
+            if event.key == K_MINUS:
+                if self.zoom > 10:
+                    self.zoom = self.zoom - 10
+                    self.make_grid()
 
 game = Game()
 game.start()
