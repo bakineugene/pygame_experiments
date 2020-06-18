@@ -21,15 +21,30 @@ def handle_events_quit(event, game):
         if event.key == K_ESCAPE:
             game.is_running = False
 
-def draw_grid_element(surface, colour, size, point):
-    point_plus_x = point[0] + size
-    point_plus_y = point[1] + size
-    draw.lines(surface, colour, True, (point, (point[0], point_plus_y), (point_plus_x, point_plus_y), (point_plus_x, point[1])))
+def draw_square_grid_element(surface, colour, size, point):
+    x = point[0] * size
+    xp = x + size
+    y = point[1] * size
+    yp = y + size
+    draw.lines(surface, colour, True, ((x, y), (x, yp), (xp, yp), (xp, y)))
 
-def draw_grid(surface, colour, size, size_x=MAP_SIZE, size_y=MAP_SIZE):
+def draw_grid(surface, colour, size, size_x, size_y):
     for x in range(size_x):
         for y in range(size_y):
-            draw_grid_element(surface, colour, size, (x * size, y * size))
+            draw_hex_grid_element(surface, colour, size, (x, y))
+
+def draw_hex_grid_element(surface, colour, size, point):
+    x = point[0] * size * 3 / 4 + size
+    y = point[1] * size
+    if point[0] % 2:
+        y = y + size / 2
+    p1 = (x, y)
+    p2 = (p1[0] + size / 2, p1[1])
+    p3 = (p2[0] + size / 4, p2[1] + size / 2)
+    p4 = (p3[0] - size / 4, p3[1] + size / 2)
+    p5 = (p4[0] - size / 2, p4[1])
+    p6 = (p5[0] - size / 4, p5[1] - size / 2) 
+    draw.lines(surface, colour, True, (p1, p2, p3, p4, p5, p6))
 
 class Game(object):
 
@@ -56,7 +71,7 @@ class Game(object):
     def make_grid(self):
         self.grid = Surface((self.zoom * MAP_SIZE + 1, self.zoom * MAP_SIZE + 1))
         self.grid.fill(COLOR_WHITE)
-        draw_grid(self.grid, COLOR_BLACK, self.zoom)
+        draw_grid(self.grid, COLOR_BLACK, self.zoom, 20, 20)
         self.grid = self.grid.convert_alpha()
         self.draw()
 
@@ -71,7 +86,7 @@ class Game(object):
         while self.is_running:
             self.clock.tick(FPS)
             for e in event.get():
-                handle_events_debug(e, self)
+                # handle_events_debug(e, self)
                 handle_events_quit(e, self)
                 self.handle_grid_scroll(e)
                 self.handle_grid_zoom(e)
