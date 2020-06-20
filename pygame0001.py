@@ -34,17 +34,19 @@ def draw_grid(surface, colour, size, size_x, size_y):
             draw_hex_grid_element(surface, colour, size, (x, y))
 
 def draw_hex_grid_element(surface, colour, size, point):
-    x = point[0] * size * 3 / 4 + size
-    y = point[1] * size
+    h = 1.7320508 * size
+    w = 2 * size
+    x = point[0] * w * 3 / 4 + w
+    y = point[1] * h
     if point[0] % 2:
-        y = y + size / 2
+        y = y + h / 2
     p1 = (x, y)
-    p2 = (p1[0] + size / 2, p1[1])
-    p3 = (p2[0] + size / 4, p2[1] + size / 2)
-    p4 = (p3[0] - size / 4, p3[1] + size / 2)
-    p5 = (p4[0] - size / 2, p4[1])
-    p6 = (p5[0] - size / 4, p5[1] - size / 2) 
-    draw.lines(surface, colour, True, (p1, p2, p3, p4, p5, p6))
+    p2 = (p1[0] + w / 2, p1[1])
+    p3 = (p2[0] + w / 4, p2[1] + h / 2)
+    p4 = (p3[0] - w / 4, p3[1] + h / 2)
+    p5 = (p4[0] - w / 2, p4[1])
+    p6 = (p5[0] - w / 4, p5[1] - h / 2) 
+    draw.aalines(surface, colour, True, (p1, p2, p3, p4, p5, p6))
 
 class Game(object):
 
