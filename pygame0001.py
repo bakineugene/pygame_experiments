@@ -1,4 +1,4 @@
-from pygame import QUIT, KEYDOWN, K_ESCAPE, draw, init, time, display, Surface, event, K_LEFT, K_RIGHT, K_UP, K_DOWN, KEYDOWN, KEYUP, K_EQUALS, K_MINUS
+from pygame import QUIT, KEYDOWN, K_ESCAPE, gfxdraw, draw, init, time, display, Surface, event, K_LEFT, K_RIGHT, K_UP, K_DOWN, KEYDOWN, KEYUP, K_EQUALS, K_MINUS
 
 RESOLUTION_DEFAULT = (1024, 768)
 
@@ -33,6 +33,20 @@ def draw_grid(surface, colour, size, size_x, size_y):
         for y in range(size_y):
             draw_hex_grid_element(surface, colour, size, (x, y))
 
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+current_color = RED
+def next():
+    global current_color
+    if current_color == RED:
+        current_color = GREEN
+    elif current_color == GREEN:
+        current_color = BLUE
+    elif current_color == BLUE:
+        current_color = RED
+    return current_color
+
 def draw_hex_grid_element(surface, colour, size, point):
     h = 1.7320508 * size
     w = 2 * size
@@ -46,7 +60,9 @@ def draw_hex_grid_element(surface, colour, size, point):
     p4 = (p3[0] - w / 4, p3[1] + h / 2)
     p5 = (p4[0] - w / 2, p4[1])
     p6 = (p5[0] - w / 4, p5[1] - h / 2) 
-    draw.aalines(surface, colour, True, (p1, p2, p3, p4, p5, p6))
+
+    gfxdraw.filled_polygon(surface, (p1, p2, p3, p4, p5, p6), next())
+    gfxdraw.aapolygon(surface, (p1, p2, p3, p4, p5, p6), colour)
 
 class Game(object):
 
